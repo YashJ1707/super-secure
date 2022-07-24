@@ -11,6 +11,7 @@ class InputField extends StatelessWidget {
     required this.validator,
     this.suffixButton = false,
     this.enabled = true,
+    this.onPressed,
   }) : super(key: key);
 
   final TextEditingController controller;
@@ -19,6 +20,7 @@ class InputField extends StatelessWidget {
   final String label;
   final String? Function(String?) validator;
   final bool enabled;
+  final Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class InputField extends StatelessWidget {
         decoration: InputDecoration(
             suffixIcon: suffixButton
                 ? IconButton(
-                    onPressed: () {},
+                    onPressed: onPressed,
                     icon: Icon(Icons.arrow_circle_right_outlined))
                 : null,
             contentPadding: const EdgeInsets.fromLTRB(10, 10, 10, 10),

@@ -143,6 +143,10 @@ class AuthPage extends StatelessWidget {
                       ),
                       const Spacer(),
                       InputField(
+                          onPressed: () {
+                            context.read<AuthBloc>().add(AuthenticatebyPasscode(
+                                passcode: passcodeController.text));
+                          },
                           percentOfWidth: 80,
                           suffixButton: true,
                           controller: passcodeController,
@@ -150,8 +154,8 @@ class AuthPage extends StatelessWidget {
                           validator: ((val) {
                             if (val?.length == 6) {
                               var passcode = passcodeController.text;
-                              // passcodeController.clear();
-                              passcodeController.clearComposing();
+                              FocusScope.of(context).nextFocus();
+                              passcodeController.clear();
                               context.read<AuthBloc>().add(
                                   AuthenticatebyPasscode(passcode: passcode));
                             }
