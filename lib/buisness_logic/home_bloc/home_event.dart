@@ -12,9 +12,15 @@ class ScreenShotEvent extends HomeEvent {
 }
 
 class DeleteListItemEvent extends HomeEvent {
+  final int index;
+
+  DeleteListItemEvent(this.index);
   List<Object> get props => [];
 }
 
 class ArchiveListItemEvent extends HomeEvent {
+  final int index;
+
+  ArchiveListItemEvent(this.index);
   List<Object> get props => [];
 }

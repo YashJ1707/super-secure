@@ -8,7 +8,7 @@ class HomeLoadingState extends HomeState {
 }
 
 class HomeLoadedState extends HomeState {
-  final List<University> universities;
-  HomeLoadedState(this.universities);
-  List<Object?> get props => [universities];
+  // final List<University> universities;
+  // HomeLoadedState(this.universities);
+  List<Object?> get props => [];
 }

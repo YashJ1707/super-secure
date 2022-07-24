@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:meta/meta.dart';
+import 'package:super_secure/data/list.dart';
 import 'package:super_secure/data/models/data_model.dart';
 import 'package:super_secure/data/repository_provider/web_pages_repository.dart';
 import 'package:super_secure/data/util/secure_storage.dart';
@@ -17,7 +18,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(HomeLoadingState());
       List<University> universities =
           await WebPagesRepository().getWebPageModelFromRawData();
-      emit(HomeLoadedState(universities));
+      UniversityList.universitiesList = universities;
+      emit(HomeLoadedState());
     });
 
     on<ScreenShotEvent>((event, emit) async {
@@ -33,6 +35,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         print(e);
       }
     });
-    on<DeleteListItemEvent>(((event, emit) async {}));
+
+    on<DeleteListItemEvent>(((event, emit) async {
+      UniversityList.universitiesList.removeAt(event.index);
+      emit(HomeLoadedState());
+    }));
+
+    on<ArchiveListItemEvent>((event, emit) {
+      UniversityList.archivedUniversitiesList
+          .add(UniversityList.universitiesList.elementAt(event.index));
+      UniversityList.universitiesList.removeAt(event.index);
+      emit(HomeLoadedState());
+    });
   }
 }

@@ -5,7 +5,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:super_secure/buisness_logic/home_bloc/home_bloc.dart';
+import 'package:super_secure/data/list.dart';
 import 'package:super_secure/data/models/data_model.dart';
+import 'package:super_secure/presentation/archive_page.dart';
+import 'package:super_secure/widgets/list_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -68,7 +71,13 @@ class _HomePageState extends State<HomePage> {
           if (state is HomeLoadedState) {
             return Scaffold(
               appBar: AppBar(
-                toolbarHeight: 40,
+                leading: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const ArchivePage()));
+                    },
+                    icon: const Icon(Icons.archive)),
+                toolbarHeight: 50,
                 elevation: 2,
                 centerTitle: true,
                 title: const Text("Data"),
@@ -82,17 +91,25 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               body: ListView.builder(
-                  itemCount: state.universities.length,
+                  itemCount: UniversityList.universitiesList.length,
                   itemBuilder: ((context, index) {
-                    final item = state.universities[index];
+                    final item = UniversityList.universitiesList[index];
                     return Slidable(
                         key: Key(item.name.toString()),
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () {}),
-                          children: const [
+                          dismissible: DismissiblePane(onDismissed: () {
+                            context
+                                .read<HomeBloc>()
+                                .add(DeleteListItemEvent(index));
+                          }),
+                          children: [
                             SlidableAction(
-                              onPressed: null,
+                              onPressed: ((context) {
+                                context
+                                    .read<HomeBloc>()
+                                    .add(DeleteListItemEvent(index));
+                              }),
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
@@ -104,11 +121,19 @@ class _HomePageState extends State<HomePage> {
                         // ignore: prefer_const_constructors
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          // dismissible: DismissiblePanes
-                          children: const [
+                          dismissible: DismissiblePane(onDismissed: (() {
+                            context
+                                .read<HomeBloc>()
+                                .add(ArchiveListItemEvent(index));
+                          })),
+                          children: [
                             SlidableAction(
-                              onPressed: null,
-                              backgroundColor: Color(0xFF7BC043),
+                              onPressed: ((context) {
+                                context
+                                    .read<HomeBloc>()
+                                    .add(ArchiveListItemEvent(index));
+                              }),
+                              backgroundColor: const Color(0xFF7BC043),
                               foregroundColor: Colors.white,
                               icon: Icons.archive,
                               label: 'Archive',
@@ -126,25 +151,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Card buildListTile(University item) {
-    return Card(
-      elevation: 6,
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-        title: Text(
-          item.name.toString(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 16),
-        ),
-        selectedTileColor: Colors.amber,
-        subtitle: Text(
-          item.domains!.first.toLowerCase(),
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.blue),
-        ),
-      ),
-    );
-  }
+  // Card buildListTile(University item) {
+  //   return Card(
+  //     elevation: 6,
+  //     child: ListTile(
+  //       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+  //       title: Text(
+  //         item.name.toString(),
+  //         textAlign: TextAlign.center,
+  //         style: const TextStyle(fontSize: 16),
+  //       ),
+  //       selectedTileColor: Colors.amber,
+  //       subtitle: Text(
+  //         item.domains!.first.toLowerCase(),
+  //         textAlign: TextAlign.center,
+  //         style: const TextStyle(color: Colors.blue),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   locationPrompt(BuildContext context) {
     Widget okButton = TextButton(
