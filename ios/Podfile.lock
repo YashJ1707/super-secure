@@ -2,7 +2,11 @@ PODS:
   - Flutter (1.0.0)
   - flutter_secure_storage (3.3.1):
     - Flutter
+  - geolocator_apple (1.2.0):
+    - Flutter
   - local_auth_ios (0.0.1):
+    - Flutter
+  - location (0.0.1):
     - Flutter
   - permission_handler_apple (9.0.4):
     - Flutter
@@ -12,7 +16,9 @@ PODS:
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - screen_capture_event (from `.symlinks/plugins/screen_capture_event/ios`)
 
@@ -21,8 +27,12 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
   local_auth_ios:
     :path: ".symlinks/plugins/local_auth_ios/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   screen_capture_event:
@@ -31,7 +41,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_secure_storage: 7953c38a04c3fdbb00571bcd87d8e3b5ceb9daec
+  geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   local_auth_ios: 0d333dde7780f669e66f19d2ff6005f3ea84008d
+  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   screen_capture_event: bcf965bb31968a51c08ad3698725c5ad8c597124
 

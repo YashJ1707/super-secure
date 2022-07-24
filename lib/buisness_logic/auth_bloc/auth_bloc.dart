@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       }
     });
+
     on<SetPasscodeEvent>((event, emit) async {
       try {
         await SecureStorage.setPasscode(event.passcode);

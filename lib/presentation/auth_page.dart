@@ -1,9 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_secure/buisness_logic/auth_bloc/auth_bloc.dart';
-import 'package:super_secure/constants/colors.dart';
 import 'package:super_secure/data/util/secure_storage.dart';
 import 'package:super_secure/presentation/home_page.dart';
 import 'package:super_secure/widgets/input_fields.dart';
@@ -52,60 +49,72 @@ class AuthPage extends StatelessWidget {
                 TextEditingController confirmPasscodeController =
                     TextEditingController();
                 return Center(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.6,
-                    decoration: BoxDecoration(
-                        border:
-                            Border.all(color: AppColors.themeColor as Color)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InputField(
-                              percentOfWidth: 70,
-                              controller: passcodeController,
-                              label: "Passcode",
-                              validator: ((val) {
-                                // if (val == "") {
-                                //   return "Can't be empty";
-                                // }
-                                if (val?.length != 6) {
-                                  return "Code Length should be 6";
-                                }
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 30.0, vertical: 80),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.security_sharp,
+                          size: 80,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Welcome",
+                          style: TextStyle(
+                            fontSize: 24,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          "Set a Passcode for Login",
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        const Spacer(),
+                        InputField(
+                            percentOfWidth: 70,
+                            controller: passcodeController,
+                            label: "Passcode",
+                            validator: ((val) {
+                              if (val?.length != 6) {
+                                return "Code Length should be 6";
+                              }
 
-                                return null;
-                              })),
-                          InputField(
-                              percentOfWidth: 70,
-                              controller: confirmPasscodeController,
-                              label: "Confirm Passcode",
-                              validator: ((val) {
-                                if (val?.length != 6 ||
-                                    passcodeController.text !=
-                                        confirmPasscodeController.text) {
-                                  return "Passcodes do not match";
-                                }
-                                if (val == "") {
-                                  return "Can't be empty";
-                                }
-                                return null;
-                              })),
-                          ElevatedButton(
-                              onPressed: () {
-                                if (isValidated(passcodeController,
-                                        confirmPasscodeController) ==
-                                    false) {
-                                  Toast.show(
-                                      "Please enter correct Credentials");
-                                } else {
-                                  context.read<AuthBloc>().add(SetPasscodeEvent(
-                                      passcode: passcodeController.text));
-                                }
-                              },
-                              child: const Text('Submit'))
-                        ],
-                      ),
+                              return null;
+                            })),
+                        InputField(
+                            percentOfWidth: 70,
+                            controller: confirmPasscodeController,
+                            label: "Confirm Passcode",
+                            validator: ((val) {
+                              if (val?.length != 6 ||
+                                  passcodeController.text !=
+                                      confirmPasscodeController.text) {
+                                return "Passcodes do not match";
+                              }
+                              if (val == "") {
+                                return "Can't be empty";
+                              }
+                              return null;
+                            })),
+                        ElevatedButton(
+                            onPressed: () {
+                              if (isValidated(passcodeController,
+                                      confirmPasscodeController) ==
+                                  false) {
+                                Toast.show("Please enter correct Credentials");
+                              } else {
+                                context.read<AuthBloc>().add(SetPasscodeEvent(
+                                    passcode: passcodeController.text));
+                              }
+                            },
+                            child: const Text('Submit')),
+                        const Spacer(),
+                      ],
                     ),
                   ),
                 );
@@ -120,7 +129,6 @@ class AuthPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // SizedBox(height: 60),
                       const Icon(
                         Icons.security_sharp,
                         size: 80,
@@ -133,9 +141,6 @@ class AuthPage extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      // SizedBox(
-                      //   height: 60,
-                      // ),
                       const Spacer(),
                       InputField(
                           percentOfWidth: 80,

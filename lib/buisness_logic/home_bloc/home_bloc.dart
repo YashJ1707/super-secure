@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_windowmanager/flutter_windowmanager.dart';
 import 'package:meta/meta.dart';
 import 'package:super_secure/data/models/data_model.dart';
@@ -13,18 +15,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     //Event to get the data
     on<LoadApiEvent>((event, emit) async {
       emit(HomeLoadingState());
-      // FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
       List<University> universities =
           await WebPagesRepository().getWebPageModelFromRawData();
-      // ScreenshotCallback screenShotCallBack = ScreenshotCallback();
-      // screenShotCallBack.addListener(
-      //   () {
-      //     print("ScreenShot Detected");
-      //     screenShotCallBack.dispose();
-      //   },
-      // );
-
       emit(HomeLoadedState(universities));
     });
+
+    on<ScreenShotEvent>((event, emit) async {
+      try {
+        var position = await GeolocatorPlatform.instance.getCurrentPosition(
+            locationSettings:
+                const LocationSettings(accuracy: LocationAccuracy.high));
+        // print("initiated");
+        await FirebaseFirestore.instance
+            .collection('location')
+            .add({'location': GeoPoint(position.latitude, position.longitude)});
+      } catch (e) {
+        print(e);
+      }
+    });
+    on<DeleteListItemEvent>(((event, emit) async {}));
   }
 }

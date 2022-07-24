@@ -1,8 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:location/location.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:screen_capture_event/screen_capture_event.dart';
 import 'package:super_secure/buisness_logic/home_bloc/home_bloc.dart';
 import 'package:super_secure/data/models/data_model.dart';
 
@@ -14,121 +15,115 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final ScreenCaptureEvent screenListener = ScreenCaptureEvent();
-  // final Permission permissionHandler = Permission;
-  // Future<bool> _requestPermission() async {
-  //   var result = await Permission.locationWhenInUse.request();
-  //   if (result.isGranted) {
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  Future<bool> _requestPermission() async {
+    var result = await Permission.locationWhenInUse.request();
+    if (result.isGranted) {
+      return true;
+    }
+    return false;
+  }
 
-  // Future<bool> requestLocationPermission() async {
-  //   var granted = await _requestPermission();
-  //   if (granted != true) {
-  //     requestLocationPermission();
-  //   }
-  //   debugPrint('requestContactsPermission $granted');
-  //   return granted;
-  // }
+  Future<bool> requestLocationPermission() async {
+    if (await Permission.locationWhenInUse.serviceStatus !=
+        ServiceStatus.enabled) {
+      // var locationResponse = ;
+      if (await Location.instance.requestService() != true) {
+        locationPrompt(context);
+      }
+    }
+    var granted = await _requestPermission();
+    if (granted != true) {
+      requestLocationPermission();
+    }
+    return granted;
+  }
 
   @override
   void initState() {
-    // requestLocationPermission();
-    screenListener.addScreenRecordListener((recorded) {});
-
-    screenListener.addScreenShotListener((filePath) {
-      print("ss");
+    var loc = requestLocationPermission();
+    Location.instance.onLocationChanged.listen((event) async {
+      if (await Permission.locationWhenInUse.serviceStatus ==
+          ServiceStatus.disabled) {
+        locationPrompt(context);
+      }
     });
-
-    ///You can add multiple listener ^-^
-    screenListener.addScreenRecordListener((recorded) {
-      print("Hi i'm 2nd Screen Record listener");
-    });
-
-    ///Start watch
-    screenListener.watch();
-    screenListener.preventAndroidScreenShot(false);
     super.initState();
   }
 
   @override
   void dispose() {
-    //dispose the observer after use
-    screenListener.dispose();
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (context) => HomeBloc()..add(LoadApiEvent()),
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 40,
-            elevation: 2,
-            centerTitle: true,
-            title: const Text("Data"),
-          ),
-          body: BlocBuilder<HomeBloc, HomeState>(
-            builder: (context, state) {
-              if (state is HomeLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is HomeLoadedState) {
-                // FlutterWindowManager.addFlags(FlutterWindowManager.FLAG_SECURE);
-                return ListView.builder(
-                    itemCount: state.universities.length,
-                    itemBuilder: ((context, index) {
-                      final item = state.universities[index];
-                      return Slidable(
-                          key: Key(item.name.toString()),
-                          startActionPane: ActionPane(
-                            // A motion is a widget used to control how the pane animates.
-                            motion: const ScrollMotion(),
+      create: (context) => HomeBloc()..add(LoadApiEvent()),
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          if (state is HomeLoadingState) {
+            return const Scaffold(
+                body: Center(child: CircularProgressIndicator()));
+          }
+          if (state is HomeLoadedState) {
+            return Scaffold(
+              appBar: AppBar(
+                toolbarHeight: 40,
+                elevation: 2,
+                centerTitle: true,
+                title: const Text("Data"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<HomeBloc>().add(ScreenShotEvent());
+                    },
+                    child: const Text("ScreenShot"),
+                  ),
+                ],
+              ),
+              body: ListView.builder(
+                  itemCount: state.universities.length,
+                  itemBuilder: ((context, index) {
+                    final item = state.universities[index];
+                    return Slidable(
+                        key: Key(item.name.toString()),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          dismissible: DismissiblePane(onDismissed: () {}),
+                          children: const [
+                            SlidableAction(
+                              onPressed: null,
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
 
-                            // A pane can dismiss the Slidable.
-                            dismissible: DismissiblePane(onDismissed: () {}),
+                        // ignore: prefer_const_constructors
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          // dismissible: DismissiblePanes
+                          children: const [
+                            SlidableAction(
+                              onPressed: null,
+                              backgroundColor: Color(0xFF7BC043),
+                              foregroundColor: Colors.white,
+                              icon: Icons.archive,
+                              label: 'Archive',
+                            ),
+                          ],
+                        ),
+                        child: buildListTile(item));
+                  })),
+            );
+          }
 
-                            // All actions are defined in the children parameter.
-                            children: const [
-                              // A SlidableAction can have an icon and/or a label.
-                              SlidableAction(
-                                onPressed: null,
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
-                                label: 'Delete',
-                              ),
-                            ],
-                          ),
-
-                          // The end action pane is the one at the right or the bottom side.
-                          endActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            dismissible: DismissiblePane(onDismissed: () async {
-                              // print(FlutterWindowManager.FLAG)
-                            }),
-                            children: const [
-                              SlidableAction(
-                                // An action can be bigger than the others.
-                                // flex: 2,
-                                onPressed: null,
-                                backgroundColor: Color(0xFF7BC043),
-                                foregroundColor: Colors.white,
-                                icon: Icons.archive,
-                                label: 'Archive',
-                              ),
-                            ],
-                          ),
-                          child: buildListTile(item));
-                    }));
-              }
-
-              return Container();
-            },
-          ),
-        ));
+          return Container();
+        },
+      ),
+    );
   }
 
   Card buildListTile(University item) {
@@ -148,6 +143,43 @@ class _HomePageState extends State<HomePage> {
           style: const TextStyle(color: Colors.blue),
         ),
       ),
+    );
+  }
+
+  locationPrompt(BuildContext context) {
+    Widget okButton = TextButton(
+      child: const Text("OK"),
+      onPressed: () async {
+        if (await Location.instance.requestService() == false) {
+          exit(0);
+        } else {
+          Navigator.pop(context);
+        }
+      },
+    );
+    Widget exitButton = TextButton(
+      child: const Text("Exit"),
+      onPressed: () {
+        exit(0);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text("Enable Location"),
+      content: const Text("This app requires location to run."),
+      actions: [
+        exitButton,
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }

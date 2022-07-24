@@ -10,3 +10,11 @@ class LoadApiEvent extends HomeEvent {
 class ScreenShotEvent extends HomeEvent {
   List<Object> get props => [];
 }
+
+class DeleteListItemEvent extends HomeEvent {
+  List<Object> get props => [];
+}
+
+class ArchiveListItemEvent extends HomeEvent {
+  List<Object> get props => [];
+}
