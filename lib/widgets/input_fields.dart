@@ -34,6 +34,9 @@ class InputField extends StatelessWidget {
           LengthLimitingTextInputFormatter(6)
         ],
         validator: validator,
+        autofocus: true,
+        textInputAction: TextInputAction.next,
+        enableInteractiveSelection: false,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
         readOnly: !enabled,

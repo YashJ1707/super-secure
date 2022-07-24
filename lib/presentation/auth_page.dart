@@ -15,6 +15,7 @@ class AuthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
+
     return BlocProvider(
         create: (context) => AuthBloc()..add(AuthenticatebyBiometricEvent()),
         child: Scaffold(
@@ -23,6 +24,10 @@ class AuthPage extends StatelessWidget {
               if (state is PasscodeIncorrectState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                     snackbar(Colors.red, "Invalid Pin! Please try again"));
+              }
+              if (state is AuthenticationSuccessState) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const HomePage()));
               }
             },
             builder: (context, state) {
@@ -91,7 +96,8 @@ class AuthPage extends StatelessWidget {
                                 if (isValidated(passcodeController,
                                         confirmPasscodeController) ==
                                     false) {
-                                  Toast.show("Please enter passcode");
+                                  Toast.show(
+                                      "Please enter correct Credentials");
                                 } else {
                                   context.read<AuthBloc>().add(SetPasscodeEvent(
                                       passcode: passcodeController.text));
@@ -116,7 +122,7 @@ class AuthPage extends StatelessWidget {
                     children: [
                       // SizedBox(height: 60),
                       const Icon(
-                        Icons.safety_check,
+                        Icons.security_sharp,
                         size: 80,
                       ),
                       const SizedBox(height: 10),
@@ -139,7 +145,8 @@ class AuthPage extends StatelessWidget {
                           validator: ((val) {
                             if (val?.length == 6) {
                               var passcode = passcodeController.text;
-                              passcodeController.clear();
+                              // passcodeController.clear();
+                              passcodeController.clearComposing();
                               context.read<AuthBloc>().add(
                                   AuthenticatebyPasscode(passcode: passcode));
                             }
@@ -192,10 +199,7 @@ class AuthPage extends StatelessWidget {
                   ),
                 );
               }
-              if (state is AuthenticationSuccessState) {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const HomePage()));
-              }
+
               return Container();
             },
           ),

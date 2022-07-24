@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:super_secure/data/repositories/api.dart';
+import 'package:super_secure/data/repositories/auth_api.dart';
 import 'package:super_secure/data/util/secure_storage.dart';
 import 'package:super_secure/presentation/home_page.dart';
 import 'package:toast/toast.dart';
