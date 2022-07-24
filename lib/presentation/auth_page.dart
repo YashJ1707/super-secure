@@ -69,7 +69,7 @@ class AuthPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         const Text(
-                          "Set a Passcode for Login",
+                          "Set a 6 digit Passcode for Login",
                           style: TextStyle(
                             fontSize: 14,
                           ),
