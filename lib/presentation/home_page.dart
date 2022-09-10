@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   Future<bool> requestLocationPermission() async {
     if (await Permission.locationWhenInUse.serviceStatus !=
         ServiceStatus.enabled) {
-      // var locationResponse = ;
       if (await Location.instance.requestService() != true) {
         locationPrompt(context);
       }
@@ -43,7 +42,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    var loc = requestLocationPermission();
     Location.instance.onLocationChanged.listen((event) async {
       if (await Permission.locationWhenInUse.serviceStatus ==
           ServiceStatus.disabled) {
@@ -70,78 +68,8 @@ class _HomePageState extends State<HomePage> {
           }
           if (state is HomeLoadedState) {
             return Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ArchivePage()));
-                    },
-                    icon: const Icon(Icons.archive)),
-                toolbarHeight: 50,
-                elevation: 2,
-                centerTitle: true,
-                title: const Text("Data"),
-                actions: <Widget>[
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<HomeBloc>().add(ScreenShotEvent());
-                    },
-                    child: const Text("ScreenShot"),
-                  ),
-                ],
-              ),
-              body: ListView.builder(
-                  itemCount: UniversityList.universitiesList.length,
-                  itemBuilder: ((context, index) {
-                    final item = UniversityList.universitiesList[index];
-                    return Slidable(
-                        key: Key(item.name.toString()),
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () {
-                            context
-                                .read<HomeBloc>()
-                                .add(DeleteListItemEvent(index));
-                          }),
-                          children: [
-                            SlidableAction(
-                              onPressed: ((context) {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(DeleteListItemEvent(index));
-                              }),
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
-                            ),
-                          ],
-                        ),
-
-                        // ignore: prefer_const_constructors
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: (() {
-                            context
-                                .read<HomeBloc>()
-                                .add(ArchiveListItemEvent(index));
-                          })),
-                          children: [
-                            SlidableAction(
-                              onPressed: ((context) {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(ArchiveListItemEvent(index));
-                              }),
-                              backgroundColor: const Color(0xFF7BC043),
-                              foregroundColor: Colors.white,
-                              icon: Icons.archive,
-                              label: 'Archive',
-                            ),
-                          ],
-                        ),
-                        child: buildListTile(item));
-                  })),
+              appBar: getAppBar(context),
+              body: buildListView(),
             );
           }
 
@@ -151,25 +79,79 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Card buildListTile(University item) {
-  //   return Card(
-  //     elevation: 6,
-  //     child: ListTile(
-  //       contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-  //       title: Text(
-  //         item.name.toString(),
-  //         textAlign: TextAlign.center,
-  //         style: const TextStyle(fontSize: 16),
-  //       ),
-  //       selectedTileColor: Colors.amber,
-  //       subtitle: Text(
-  //         item.domains!.first.toLowerCase(),
-  //         textAlign: TextAlign.center,
-  //         style: const TextStyle(color: Colors.blue),
-  //       ),
-  //     ),
-  //   );
-  // }
+  ListView buildListView() {
+    return ListView.builder(
+        itemCount: UniversityList.universitiesList.length,
+        itemBuilder: ((context, index) {
+          final item = UniversityList.universitiesList[index];
+          return buildSlidableTile(item, context, index);
+        }));
+  }
+
+  Slidable buildSlidableTile(University item, BuildContext context, int index) {
+    return Slidable(
+        key: Key(item.name.toString()),
+        startActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          dismissible: DismissiblePane(onDismissed: () {
+            context.read<HomeBloc>().add(DeleteListItemEvent(index));
+          }),
+          children: [
+            SlidableAction(
+              onPressed: ((context) {
+                context.read<HomeBloc>().add(DeleteListItemEvent(index));
+              }),
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
+            ),
+          ],
+        ),
+
+        // ignore: prefer_const_constructors
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          dismissible: DismissiblePane(onDismissed: (() {
+            context.read<HomeBloc>().add(ArchiveListItemEvent(index));
+          })),
+          children: [
+            SlidableAction(
+              onPressed: ((context) {
+                context.read<HomeBloc>().add(ArchiveListItemEvent(index));
+              }),
+              backgroundColor: const Color(0xFF7BC043),
+              foregroundColor: Colors.white,
+              icon: Icons.archive,
+              label: 'Archive',
+            ),
+          ],
+        ),
+        child: buildListTile(item));
+  }
+
+  AppBar getAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ArchivePage()));
+          },
+          icon: const Icon(Icons.archive)),
+      toolbarHeight: 50,
+      elevation: 2,
+      centerTitle: true,
+      title: const Text("Data"),
+      actions: <Widget>[
+        ElevatedButton(
+          onPressed: () {
+            context.read<HomeBloc>().add(ScreenShotEvent());
+          },
+          child: const Text("ScreenShot"),
+        ),
+      ],
+    );
+  }
 
   locationPrompt(BuildContext context) {
     Widget okButton = TextButton(

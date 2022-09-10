@@ -2,10 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:super_secure/buisness_logic/auth_bloc/auth_bloc.dart';
-import 'package:super_secure/buisness_logic/home_bloc/home_bloc.dart';
 import 'package:super_secure/presentation/auth_page.dart';
-import 'package:super_secure/presentation/home_page.dart';
-import 'package:toast/toast.dart';
 
 import 'firebase_options.dart';
 
@@ -28,8 +25,8 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: ThemeData(
             primarySwatch: Colors.teal,
-            buttonTheme: ButtonThemeData(buttonColor: Colors.teal),
-            iconTheme: IconThemeData(color: Colors.teal)),
+            buttonTheme: const ButtonThemeData(buttonColor: Colors.teal),
+            iconTheme: const IconThemeData(color: Colors.teal)),
         home: const AuthPage(),
       ),
     );
